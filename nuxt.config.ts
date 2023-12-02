@@ -6,11 +6,14 @@ export default defineNuxtConfig({
     "vuetify/lib/styles/main.sass",
     "@/assets/css/main.scss",
   ],
-  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt"],
+  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt","nuxt-gtag"],
   build: {
     transpile: ["vuetify"],
   },
   devtools: { enabled: true },
+  gtag:{
+    id:"G-SG6QYZP7FB"
+  },
   vite: {
     define: {
       'process.env.DEBUG': false,

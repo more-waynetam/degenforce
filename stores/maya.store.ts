@@ -186,12 +186,17 @@ export const useMayaStore = defineStore("mayaStore", {
       return await response.json();
     },
     async getBalance() {
-      const url = `${mayaBaseUrl}/balance/${this.mayaAddress}`;
+      const url = `${mayaBaseUrl}/balance/${this.getAddress()}`;
       const response = await fetch(url);
       return await response.json();
     },
+    getAddress(){
+      const address = this.mayaAddress.toLowerCase().trim();
+      return address;
+    },
     async getMember() {
-      const url = `${mayaBaseUrl}/member/${this.mayaAddress}`;
+      
+      const url = `${mayaBaseUrl}/member/${this.getAddress()}`;
       const response = await fetch(url);
       const member = await response.json();
       const pools: MayaMember[] = [];

@@ -21,7 +21,8 @@ const { data: pools,pending,refresh } = useAsyncData(
   "member",
   async () => {
     let pattern = /^maya1[a-z0-9]{38}$/;
-    let isValid = pattern.test(mayaStore.mayaAddress);
+    const address = mayaStore.mayaAddress.toLowerCase().trim();
+    let isValid = pattern.test(address);
     if (isValid) {
       const result = await mayaStore.getMember();
       return result;
