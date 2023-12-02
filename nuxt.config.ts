@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     transpile: ["vuetify"],
   },
   devtools: { enabled: true },
-  experimental: {
+  experimental:{
     inlineSSRStyles: false
   },
   vite: {

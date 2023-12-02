@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@mdi/font": "^7.3.67",
+    "@nuxt/kit": "^3.8.2",
+    "@nuxt/vite-builder": "^3.8.2",
     "@pinia/nuxt": "^0.5.1",
     "moment": "^2.29.4",
     "pinia": "^2.1.7",
