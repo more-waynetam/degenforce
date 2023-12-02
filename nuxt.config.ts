@@ -9,11 +9,11 @@ export default defineNuxtConfig({
   modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt"],
   build: {
     transpile: ["vuetify"],
-    rollupOptions: {
-      external: ["vuetify/lib/styles/main.sass",],
-    },
   },
   devtools: { enabled: true },
+  experimental: {
+    inlineSSRStyles: false
+  },
   vite: {
     define: {
       'process.env.DEBUG': false,
