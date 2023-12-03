@@ -1,12 +1,15 @@
 <template>
-  <v-col v-if="!pending" cols="12">
+  <v-col v-if="!pending && !error" cols="12">
     <v-sheet class="mb-5 mx-auto text-center" max-width="400" color="transparent">
       <p>Total value</p>
       <h1 class="text-h3 text-md-2 text-primary font-weight-black">
         ${{ $localNumber(totalPoolValue) }}
       </h1>
-      <p :class="$numberColor(totalProfit)" >{{ $percent(totalProfitPercent) }}</p>
+      <p :class="$numberColor(totalProfit)" >Profit {{ $percent(totalProfitPercent) }}</p>
     </v-sheet>
+  </v-col>
+  <v-col v-if="error">
+    <p>{{ error }}</p>
   </v-col>
   <MayaMemberItem
     v-if="!pending"
@@ -50,6 +53,7 @@ const {
   data: pools,
   pending,
   refresh,
+  error
 } = useAsyncData(
   "member",
   async () => {
