@@ -8,7 +8,7 @@
             <p v-if="item.subtitle" class="text-disabled text-caption">
               {{ item.subtitle }}
             </p>
-            <template v-slot:append><span class="text-primary">{{ item.value }}</span></template>
+            <template v-slot:append><span class="text-secondary">{{ item.value }}</span></template>
         </v-list-item>
         <v-list-subheader class="mt-5">Current stats</v-list-subheader>
         <v-list-item class="py-0" v-for="(item, index) in newMember" :key="index">
@@ -16,7 +16,7 @@
             <p v-if="item.subtitle" class="text-disabled text-caption">
               {{ item.subtitle }}
             </p>
-            <template v-slot:append><span class="text-primary">{{ item.value }}</span></template>
+            <template v-slot:append><span class="text-secondary">{{ item.value }}</span></template>
         </v-list-item>
         <v-list-subheader class="mt-5">Impermanent Loss Protection</v-list-subheader>
         <v-list-item class="py-0" v-for="(item, index) in ilp" :key="index">
@@ -24,7 +24,7 @@
             <p v-if="item.subtitle" class="text-disabled text-caption">
               {{ item.subtitle }}
             </p>
-            <template v-slot:append><span class="text-primary">{{ item.value }}</span></template>
+            <template v-slot:append><span class="text-secondary">{{ item.value }}</span></template>
         </v-list-item>
       </v-list>
       <v-card-actions class="pa-0 ma-0"><v-btn @click="dialog=false" variant="tonal" color="primary" block class="rounded-0">CLOSE</v-btn></v-card-actions>
@@ -69,12 +69,12 @@ oldMember.value.push({
   value: pool,
 });
 oldMember.value.push({
-  title: "Asset Added",
+  title: pool+" Added",
   subtitle: "@" + moment.unix(dateLastAdded).format("YYYY/MM/DD"),
   value: $localNumber(memberPoolDetail.assetDepth).toString(),
 });
 oldMember.value.push({
-  title: "Asset Value",
+  title: pool+" Value",
   subtitle: "@" + $localNumber(memberPoolDetail.assetPriceUSD).toString(),
   value: "$" + $localNumber(memberPoolDetail.assetValue).toString(),
 });
@@ -97,17 +97,17 @@ oldMember.value.push({
 });
 
 newMember.value.push({
-  title: "Asset Added",
+  title: pool+" Amount",
   subtitle: "@" + moment.unix(dateLastAdded).format("YYYY/MM/DD"),
   value: $localNumber(newMemberPoolDetail.assetDepth).toString(),
 });
 newMember.value.push({
-  title: "Asset Value",
+  title: pool+" Value",
   subtitle:"@" +  $localNumber(newMemberPoolDetail.assetPriceUSD).toString(),
   value: "$" + $localNumber(newMemberPoolDetail.assetValue).toString(),
 });
 newMember.value.push({
-  title: "Cacao Added",
+  title: "Cacao Amount",
   subtitle: moment.unix(dateLastAdded).format("YYYY/MM/DD"),
   value: $localNumber(newMemberPoolDetail.cacaoDepth).toString(),
 });
@@ -130,10 +130,15 @@ ilp.value.push({
 });
 
 ilp.value.push({
+  title: "HODL Value",
+  value: "$"+$localNumber(impermanentLossProtection.holdValue).toString(),
+});
+
+ilp.value.push({
   title: "Impermanent Loss",
   subtitle: $percent(impermanentLossProtection.impermanentLossPercent),
   value:
-    "$" + $localNumber(impermanentLossProtection.impermanentLoss).toString(),
+    "-$" + $localNumber(impermanentLossProtection.impermanentLoss).toString(),
 });
 
 ilp.value.push({
