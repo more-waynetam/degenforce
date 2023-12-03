@@ -4,7 +4,7 @@
       <v-card-text>
         <v-row>
           <v-col>
-            <h2 class="text-h4 font-weight-bold mb-2">
+            <h2 class="text-h4 text-md-h5 font-weight-bold mb-2">
               ${{ $localNumber(member.newMemberPoolDetail.totalPoolValue) }}
             </h2>
             <p class="text-disabled text-caption">
@@ -12,7 +12,7 @@
               <span
                 :class="$numberColor(member.profit)"
                 class="text-body font-weight-bold"
-                >${{ $localNumber(member.profit) }}</span
+                >${{ $localNumber(member.profit) }} ({{ $percent(member.profit/member.memberPoolDetail.totalPoolValue) }})</span
               >
             </p>
             <p class="text-disabled text-caption">
@@ -20,12 +20,11 @@
               <span class="text-error font-weight-bold"
                 >-${{
                   $localNumber(member.impermanentLossProtection.impermanentLoss)
-                }}</span
-              >
+                }} ({{$percent(member.impermanentLossProtection.impermanentLossPercent)}})</span>
             </p>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col
+            cols="4"
             ><h2 class="text-h4 text-right font-weight-thin text-primary">
               {{ member.pool }}
             </h2></v-col

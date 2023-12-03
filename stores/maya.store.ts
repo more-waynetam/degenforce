@@ -32,6 +32,8 @@ export interface ILP {
   coverCacao: number;
   withdrawValue: number;
   holdValue: number;
+  assetChangePercent: number;
+  cacaoChangePercent: number;
 }
 
 export interface MayaPool {
@@ -174,6 +176,8 @@ export const useMayaStore = defineStore("mayaStore", {
         coverValue,
         coverCacao,
         withdrawValue,
+        assetChangePercent,
+        cacaoChangePercent,
       };
     },
     async getHistory(pool: string, from?: number, to?: number) {
