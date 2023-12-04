@@ -98,7 +98,6 @@ oldMember.value.push({
 
 newMember.value.push({
   title: pool+" Amount",
-  subtitle: "@" + moment.unix(dateLastAdded).format("YYYY/MM/DD"),
   value: $localNumber(newMemberPoolDetail.assetDepth).toString(),
 });
 newMember.value.push({
@@ -108,7 +107,6 @@ newMember.value.push({
 });
 newMember.value.push({
   title: "Cacao Amount",
-  subtitle: moment.unix(dateLastAdded).format("YYYY/MM/DD"),
   value: $localNumber(newMemberPoolDetail.cacaoDepth).toString(),
 });
 newMember.value.push({
@@ -157,9 +155,6 @@ ilp.value.push({
 
 ilp.value.push({
   title: "ILP Withdrawable",
-  subtitle:
-    "@" +
-    moment.unix(impermanentLossProtection.ILPCoverDate).format("YYYY/MM/DD"),
   value: "$" + $localNumber(impermanentLossProtection.withdrawValue).toString(),
 });
 

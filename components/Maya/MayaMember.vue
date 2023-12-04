@@ -1,5 +1,5 @@
 <template>
-  <v-col v-if="!pending && !error" cols="12">
+  <v-col v-if="!pending && !error && pools?.length" cols="12">
     <v-sheet class="mb-5 mx-auto text-center" max-width="400" color="transparent">
       <p>Total value</p>
       <h1 class="text-h3 text-md-2 text-primary font-weight-black">
@@ -9,7 +9,10 @@
     </v-sheet>
   </v-col>
   <v-col v-if="error">
-    <p>{{ error }}</p>
+    <p class="text-center text-error">{{ error }}</p>
+  </v-col>
+  <v-col v-if="pools?.length==0">
+    <p class="text-center text-error">No LP found.</p>
   </v-col>
   <MayaMemberItem
     v-if="!pending"
@@ -29,19 +32,7 @@
   </v-sheet>
 </template>
 <script setup lang="ts">
-import moment from "moment";
 const mayaStore = useMayaStore();
-
-const unixDate = (date: number, format: string = "YYYY-MM-DD HH:mm:ss") => {
-  return moment.unix(Number(date)).format(format);
-};
-
-const holdValue = (pool: MayaPool, newPool: MayaPool) => {
-  return (
-    pool.assetDepth * newPool.assetPriceUSD +
-    pool.cacaoDepth * newPool.cacaoPriceUSD
-  );
-};
 
 const totalPoolValue = ref(0);
 const totalHoldValue = ref(0);

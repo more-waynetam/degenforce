@@ -202,6 +202,10 @@ export const useMayaStore = defineStore("mayaStore", {
       
       const url = `${mayaBaseUrl}/member/${this.getAddress()}`;
       const response = await fetch(url);
+      if(response.status==404){
+        console.log("Member not found");
+        return [];
+      }
       const member = await response.json();
       const pools: MayaMember[] = [];
       for (const p of member.pools) {
