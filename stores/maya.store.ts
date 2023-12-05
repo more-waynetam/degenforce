@@ -48,11 +48,11 @@ export interface MayaPool {
 }
 
 export interface PoolInfo {
-  assetDepth: string; // String representation of a large number
-  assetPrice: string; // Price of asset in terms of rune
-  assetPriceUSD: string; // Price of asset in USD
-  runeDepth: string; // Depth of rune in the pool
-  liquidityUnits: string; // Total liquidity units in the pool
+  assetDepth: number; // String representation of a large number
+  assetPrice: number; // Price of asset in terms of rune
+  assetPriceUSD: number; // Price of asset in USD
+  runeDepth: number; // Depth of rune in the pool
+  liquidityUnits: number; // Total liquidity units in the pool
   // Other fields can be added if needed
 }
 
@@ -76,14 +76,12 @@ export const useMayaStore = defineStore("mayaStore", {
       return symbolParts[0];
     },
     calculatePoolValues(poolInfo: PoolInfo): MayaPool {
-      const assetDepth = parseInt(poolInfo.assetDepth) / 100000000; // Adjusting for decimal places
-      const cacaoDepth = parseInt(poolInfo.runeDepth) / 10000000000; // Adjusting for decimal places
-      const assetPriceUSD = parseFloat(poolInfo.assetPriceUSD);
-      const assetPrice = parseFloat(poolInfo.assetPrice);
-      const liquidityUnits = parseInt(poolInfo.liquidityUnits);
-
+      const assetDepth = poolInfo.assetDepth / 100000000; // Adjusting for decimal places
+      const cacaoDepth = poolInfo.runeDepth / 10000000000; // Adjusting for decimal places
+      const assetPriceUSD = poolInfo.assetPriceUSD;
+      const assetPrice = poolInfo.assetPrice;
+      const liquidityUnits = poolInfo.liquidityUnits;
       const assetValue = assetDepth * assetPriceUSD;
-
       // Calculating the price of cacao in USD
       const cacaoPriceUSD = assetPriceUSD / assetPrice;
       const cacaoValue = cacaoDepth * cacaoPriceUSD;
@@ -201,7 +199,15 @@ export const useMayaStore = defineStore("mayaStore", {
       const address = this.mayaAddress.toLowerCase().trim();
       return address;
     },
+    async getPoolList() {
+      const url=`${mayaBaseUrl}/pools`;
+      const response = await fetch(url);
+      //console.log(await response.json());
+      return await response.json();
+    },
     async getMember() {
+      const poolList=await this.getPoolList();
+      console.log(poolList);
       const url = `${mayaBaseUrl}/member/${this.getAddress()}`;
       const response = await fetch(url);
       if (response.status == 404) {
@@ -211,11 +217,13 @@ export const useMayaStore = defineStore("mayaStore", {
       const member = await response.json();
       const pools: MayaMember[] = [];
       for (const p of member.pools) {
-        if(p.pool!='ETH.WSTETH-0X7FEC9ED4FD76621BA8BFF928DC4AE2C3C8AFAC82'){
+        if(poolList.find((_pool:any)=>_pool.asset==p.pool) && p.liquidityUnits>0){
           const {
             pool,
             assetAdded,
             runeAdded: cacaoAdded,
+            assetWithdrawn,
+            runeWithdrawn: cacaoWithdrawn,
             dateFirstAdded,
             dateLastAdded,
             liquidityUnits,
@@ -229,13 +237,12 @@ export const useMayaStore = defineStore("mayaStore", {
             assetHistory.intervals[0]
           );
           const memberPoolDetail = this.calculatePoolValues({
-            assetDepth: assetAdded,
+            assetDepth: assetAdded- assetWithdrawn,
             assetPrice: assetHistory.intervals[0].assetPrice,
             assetPriceUSD: assetHistory.intervals[0].assetPriceUSD,
             runeDepth: cacaoAdded,
             liquidityUnits: liquidityUnits.toString(),
           });
-
           const newAssetHistory = await this.getHistory(pool);
           const newPoolDetail = this.calculatePoolValues(
             newAssetHistory.intervals[0]
@@ -244,13 +251,11 @@ export const useMayaStore = defineStore("mayaStore", {
             newPoolDetail,
             liquidityUnits
           );
-
           const impermanentLossProtection = this.calculateImpermanentLoss(
             memberPoolDetail,
             newMemberPoolDetail,
             dateLastAdded
           );
-
           const profit =
             newMemberPoolDetail.totalPoolValue -
             memberPoolDetail.totalPoolValue;

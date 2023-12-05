@@ -48,7 +48,7 @@
                 </h3>
                 <p class="text-disabled text-caption">
                   {{ member.pool }}@{{
-                    $localNumber(member.newMemberPoolDetail.assetPriceUSD)
+                    $localNumber(member.newMemberPoolDetail.assetPriceUSD*1)
                   }}
                 </p>
               </v-card-text>
@@ -154,15 +154,6 @@
   </v-col>
 </template>
 <script setup lang="ts">
-import moment from "moment";
-const mayaStore = useMayaStore();
-
-const holdValue = (pool: MayaPool, newPool: MayaPool) => {
-  return (
-    pool.assetDepth * newPool.assetPriceUSD +
-    pool.cacaoDepth * newPool.cacaoPriceUSD
-  );
-};
 const props = defineProps({
   member: {
     type: Object as PropType<MayaMember>,
