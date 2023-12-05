@@ -13,8 +13,7 @@ export interface MayaMember {
   impermanentLossProtection: ILP;
   dateFirstAdded: number;
   dateLastAdded: number;
-  profit:number;
-
+  profit: number;
 }
 
 export interface ILP {
@@ -148,7 +147,10 @@ export const useMayaStore = defineStore("mayaStore", {
       const ILPValue = impermanentLoss > 0 ? Math.abs(impermanentLoss) : 0;
       const ILPCacao = ILPValue / newPool.cacaoPriceUSD;
       const lastAdded = dateLastAdded;
-      const ILPCoverDate= moment.unix(dateLastAdded).add(ILPDays+50, "days").unix();      
+      const ILPCoverDate = moment
+        .unix(dateLastAdded)
+        .add(ILPDays + 50, "days")
+        .unix();
       const ILPDaysLeft = Math.max(
         moment
           .unix(dateLastAdded)
@@ -160,7 +162,7 @@ export const useMayaStore = defineStore("mayaStore", {
       const coverValue = coverage * ILPValue;
       const coverCacao = coverValue / newPool.cacaoPriceUSD;
       const withdrawValue = coverValue + newPool.totalPoolValue;
-      
+
       return {
         holdValue,
         impermanentLoss,
@@ -182,11 +184,12 @@ export const useMayaStore = defineStore("mayaStore", {
     },
     async getHistory(pool: string, from?: number, to?: number) {
       const query = [];
-      if (from) query.push(`from=${from}`);
-      if (to) query.push(`to=${to}`);
+      if (from && from != 0) query.push(`from=${from}`);
+      if (to && from != 0) query.push(`to=${to}`);
       const queryString = query.join("&");
       const url = `${mayaBaseUrl}/history/depths/${pool}?${queryString}`;
       const response = await fetch(url);
+      if (response.status == 400) return { intervals: [] };
       return await response.json();
     },
     async getBalance() {
@@ -194,71 +197,76 @@ export const useMayaStore = defineStore("mayaStore", {
       const response = await fetch(url);
       return await response.json();
     },
-    getAddress(){
+    getAddress() {
       const address = this.mayaAddress.toLowerCase().trim();
       return address;
     },
     async getMember() {
-      
       const url = `${mayaBaseUrl}/member/${this.getAddress()}`;
       const response = await fetch(url);
-      if(response.status==404){
+      if (response.status == 404) {
         console.log("Member not found");
         return [];
       }
       const member = await response.json();
       const pools: MayaMember[] = [];
       for (const p of member.pools) {
-        const {
-          pool,
-          assetAdded,
-          runeAdded: cacaoAdded,
-          dateFirstAdded,
-          dateLastAdded,
-          liquidityUnits,
-        } = p;
-        const assetHistory = await this.getHistory(
-          pool,
-          dateFirstAdded,
-          dateLastAdded
-        );
-        const poolDetail = this.calculatePoolValues(assetHistory.intervals[0]);
-        const memberPoolDetail = this.calculatePoolValues({
-          assetDepth: assetAdded,
-          assetPrice: assetHistory.intervals[0].assetPrice,
-          assetPriceUSD: assetHistory.intervals[0].assetPriceUSD,
-          runeDepth: cacaoAdded,
-          liquidityUnits: liquidityUnits.toString(),
-        });
+        if(p.pool!='ETH.WSTETH-0X7FEC9ED4FD76621BA8BFF928DC4AE2C3C8AFAC82'){
+          const {
+            pool,
+            assetAdded,
+            runeAdded: cacaoAdded,
+            dateFirstAdded,
+            dateLastAdded,
+            liquidityUnits,
+          } = p;
+          const assetHistory = await this.getHistory(
+            pool,
+            dateFirstAdded,
+            dateLastAdded
+          );
+          const poolDetail = this.calculatePoolValues(
+            assetHistory.intervals[0]
+          );
+          const memberPoolDetail = this.calculatePoolValues({
+            assetDepth: assetAdded,
+            assetPrice: assetHistory.intervals[0].assetPrice,
+            assetPriceUSD: assetHistory.intervals[0].assetPriceUSD,
+            runeDepth: cacaoAdded,
+            liquidityUnits: liquidityUnits.toString(),
+          });
 
-        const newAssetHistory = await this.getHistory(pool);
-        const newPoolDetail = this.calculatePoolValues(
-          newAssetHistory.intervals[0]
-        );
-        const newMemberPoolDetail = this.calculatePoolValuesFromUnits(
-          newPoolDetail,
-          liquidityUnits
-        );
+          const newAssetHistory = await this.getHistory(pool);
+          const newPoolDetail = this.calculatePoolValues(
+            newAssetHistory.intervals[0]
+          );
+          const newMemberPoolDetail = this.calculatePoolValuesFromUnits(
+            newPoolDetail,
+            liquidityUnits
+          );
 
-        const impermanentLossProtection = this.calculateImpermanentLoss(
-          memberPoolDetail,
-          newMemberPoolDetail,
-          dateLastAdded
-        );
+          const impermanentLossProtection = this.calculateImpermanentLoss(
+            memberPoolDetail,
+            newMemberPoolDetail,
+            dateLastAdded
+          );
 
-        const profit= newMemberPoolDetail.totalPoolValue-memberPoolDetail.totalPoolValue;
+          const profit =
+            newMemberPoolDetail.totalPoolValue -
+            memberPoolDetail.totalPoolValue;
 
-        pools.push({
-          profit,
-          pool: this.extractSymbol(pool),
-          poolDetail,
-          newPoolDetail,
-          dateFirstAdded,
-          dateLastAdded,
-          memberPoolDetail,
-          newMemberPoolDetail,
-          impermanentLossProtection,
-        });
+          pools.push({
+            profit,
+            pool: this.extractSymbol(pool),
+            poolDetail,
+            newPoolDetail,
+            dateFirstAdded,
+            dateLastAdded,
+            memberPoolDetail,
+            newMemberPoolDetail,
+            impermanentLossProtection,
+          });
+        }
       }
       return pools;
     },

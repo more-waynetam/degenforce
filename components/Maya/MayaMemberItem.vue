@@ -34,7 +34,7 @@
             </p>
           </v-col>
           <v-col cols="4"
-            ><h2 class="text-h4 text-right font-weight-thin text-primary">
+            ><h2 class="text-h5 text-right font-weight-thin text-primary">
               {{ member.pool }}
             </h2></v-col
           >
