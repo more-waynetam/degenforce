@@ -1,7 +1,7 @@
 <template>
   <v-container class="text-center fill-height flex-column justify-center">
-    <h1 class="text-center text-h1 text-primary">DEGEN FORCE</h1>
-    <p class="my-5">Impermanant loss protestion calculator for MAYAProtocol</p>
-    <v-btn to="/maya" color="secondary">Launch app</v-btn>
+    <img src="/images/dgf-dark-logo-transparent-1x1.svg" width="340"/>
+    <p class="mt-10 mb-5">Impermanant loss protestion calculator for MAYAProtocol</p>
+    <v-btn to="/maya" class="rounded-0" width="340" color="black">Launch app</v-btn>
   </v-container>
 </template>

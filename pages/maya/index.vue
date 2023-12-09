@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <h1 class="text-center text-h1 mt-10">DEGEN FORCE</h1>
     <div style="max-width: 600px;" class="mx-auto my-5 pa-5">
+      <v-img src="/images/dgf-dark-logo-text-trans2.svg" class="my-10"></v-img>
       <v-text-field
           v-model="mayaStore.mayaAddress"
           variant="outlined"
