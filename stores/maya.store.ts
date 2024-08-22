@@ -1,6 +1,6 @@
+import { useLocalStorage } from "@vueuse/core";
 import moment from "moment";
 import { defineStore } from "pinia";
-import { useCrypto } from "~/composables/crypto.composable";
 
 const mayaBaseUrl = "https://midgard.mayachain.info/v2";
 
@@ -58,10 +58,19 @@ export interface PoolInfo {
 
 export const useMayaStore = defineStore("mayaStore", {
   state: () => ({
-    mayaAddress: "",
-    mayaAddressList: [],
+    mayaAddress: useLocalStorage("mayaAddress", ""),
+    mayaAddressList: useLocalStorage("mayaAddressList", [] as Array<String>),
   }),
   actions: {
+    pushAddress(address: string) {
+      //push latest 5 addresses
+      const addressList:Array<String> = this.mayaAddressList;
+      addressList.push(address);
+      if (addressList.length > 5) {
+        addressList.shift();
+      }
+      this.mayaAddressList = addressList;
+    },
     extractSymbol(input: string): string {
       // Split the string by '.' and take the second part (after 'PREFIX.')
       const parts = input.split(".");
@@ -281,5 +290,4 @@ export const useMayaStore = defineStore("mayaStore", {
       return await response.json();
     },
   },
-  persist: true,
 });
